@@ -47,3 +47,59 @@ searchInput.addEventListener("input",()=>{
         loadMoreBtn.style.display=movies.length>=10?"block":"none";
     })
 })
+loadMoreBtn.addEventListener("click", async ()=>{
+    currentPage++;
+    const movies = await fetchMovies(currentQuery,currentPage);
+    renderMovies(movies,true);
+    if(movies.length<10) loadMoreBtn.style.display = "none";
+})
+async function fetchMovieDetails(imdbID) {
+    const res = await fetch(`https://www.omdbapi.com/?apikey=${API_KEY}&i=${imdbID}&plot=full`);
+    const data = res.json();
+    return data.Response==="True"?data:{};
+}
+results.addEventListener("click", async(e)=>{
+    const card = e.target.closest(".movie-card");
+    if (!card) return;
+    const movieID = await card.dataset.id;
+    if(!movieID) return alert("IMDB ID not found");
+    const movie = await fetchMovieDetails(movieID);
+    showModal(movie);
+})
+function showModal(movie){
+    modalBody.innerHTML = `<img src="${
+      movie.Poster !== "N/A"
+        ? movie.Poster
+        : "https://via.placeholder.com/150x225"
+    }">
+    <div>
+      <h2>${movie.Title || "No Title"} (${movie.Year || "N/A"})</h2>
+      <p><strong>Genre:</strong> ${
+        movie.Genre !== "N/A" ? movie.Genre : "Not available"
+      }</p>
+      <p><strong>IMDb:</strong> ${
+        movie.imdbRating !== "N/A" ? movie.imdbRating : "N/A"
+      } | 
+         <strong>Runtime:</strong> ${
+           movie.Runtime !== "N/A" ? movie.Runtime : "N/A"
+         }</p>
+      <p><strong>Director:</strong> ${
+        movie.Director !== "N/A" ? movie.Director : "N/A"
+      }</p>
+      <p><strong>Actors:</strong> ${
+        movie.Actors !== "N/A" ? movie.Actors : "N/A"
+      }</p>
+      <p><strong>Plot:</strong> ${
+        movie.Plot !== "N/A" ? movie.Plot : "No plot available"
+      }</p>
+      <p><strong>Box Office:</strong> ${
+        movie.BoxOffice && movie.BoxOffice !== "N/A"
+          ? movie.BoxOffice
+          : "Not disclosed"
+      }</p>
+    </div>;`
+    modal.style.display="block";
+}
+closeBtn.addEventListener("click",()=>{
+    return modal.style.display="none";
+})
