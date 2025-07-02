@@ -1,0 +1,26 @@
+body{
+    margin: 0;
+    font-family: Arial, Helvetica, sans-serif;
+    background: #111;
+    color: #fff;
+}
+header{
+    padding: 20px;
+    background: #141414;
+    text-align: center;
+}
+header input{
+    padding: 10px;
+    width: 60%;
+    max-width: 400px;
+    font-size: 1rem;
+    border-radius: 5px;
+    border: none;
+    box-sizing: border-box;
+}
+.movie-grid{
+    display: grid;
+    grid-template-columns: repeat(auto-fill,minmax(160px,1fr));
+    gap: 20px;
+    padding: 20px;
+}
